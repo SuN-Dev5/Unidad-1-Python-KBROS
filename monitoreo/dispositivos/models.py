@@ -1,5 +1,6 @@
 from django.db import models
 
+# feature/modelos_categoria_zona_Gabo
 # Tus modelos: Categoria y Zona
 class Categoria(models.Model):
     nombre = models.CharField(max_length=50)
