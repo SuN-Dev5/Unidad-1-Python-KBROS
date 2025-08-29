@@ -10,8 +10,7 @@ class Dispositivo(models.Model):
     def __str__(self):
         return self.nombre
 
- feature/modelos_alerta_medicion_Seba
-# Create your models here.
+ #feature/modelos_alerta_medicion_Seba
 class Medicion(models.Model):
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE)
     consumo = models.DecimalField(max_digits=10, decimal_places=3)
