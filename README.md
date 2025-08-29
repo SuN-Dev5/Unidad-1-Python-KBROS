@@ -2,3 +2,8 @@
 Grupo gabo martin  seba
 
 HAY COSAS QUE ARREGLAR Y TNEMOS HASTA HOY (VIERNES 29) PARA TERMINARLO ANTES DE LAS 12 (11:20 FECHA LIMITE ) O DESCUENTA PUNTOS ( SI ERA CON PUNTOS LA WEA )
+
+Datos Admin
+Usuario: Admin
+Gmail: gabrielbstmx0@gmail.com 
+Password: 12345
