@@ -2,21 +2,17 @@
 <html>
 <head>
     <title>Panel de dispositivos</title>
-    <style>
-        .green { color: green; }
-        .red { color: red; }
-    </style>
 </head>
 <body>
     <h1><strong>Panel de dispositivos</strong></h1>
-    <p>Consumo máximo permitido: {{ consumo_maximo }} W</p>
-
     <ul>
-        {% for dispositivo in dispositivos %}
-            <li class="{{ dispositivo.color }}">
-                {{ dispositivo.nombre }} - {{ dispositivo.consumo }} W - {{ dispositivo.estado }}
-            </li>
-        {% endfor %}
+      {% for d in dispositivos %}
+        <li>{{ d.nombre }} - {{ d.categoria }} {{ d.categoria.descripcion }}
+            <a href="{% url 'dispositivo' d.id %}">Detalle</a>
+        </li>
+      {% empty %}
+        <li>No hay dispositivos.</li>
+      {% endfor %}
     </ul>
 </body>
 </html>
