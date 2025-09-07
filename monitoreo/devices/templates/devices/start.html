@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Panel</title>
+</head>
+<body>
+    <h1><strong>Device Panel</strong></h1>
+    <ul>
+      {% for d in device %}
+        <li>{{ d.name }} - {{ d.category }} {{ d.category.status }}
+            <a href="{% url 'device' d.id %}">Details</a>
+        </li>
+      {% empty %}
+        <li>No Devices.</li>
+      {% endfor %}
+    </ul>
+</body>
+</html>
