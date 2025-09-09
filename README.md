@@ -14,3 +14,9 @@ MARTIN: H06 , H07 , H03, H04
 GABO: H13, H01, H09, H05, H12
 
 https://drive.google.com/file/d/1mJLqgB0AHjPF9YU2ctShgueOuKjpuifm/view?usp=sharing
+
+CRUD Measurement
+CRUD Device
+Edit Profile
+Edit Organization
+Add Alert
