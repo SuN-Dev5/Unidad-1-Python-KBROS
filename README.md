@@ -7,3 +7,8 @@ Datos Admin
 Usuario: Admin
 Gmail: gabrielbstmx0@gmail.com 
 Password: 12345
+
+HISTORIAS DE USUARIO:
+SEBA: H02, H08 , H10 ,H11
+MARTIN: H06 , H07 , H03, H04
+GABO: H13, H01, H09, H05, H12
