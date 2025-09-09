@@ -1,0 +1,79 @@
+{% extends 'devices/base.html' %}
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">Devices by Category</div>
+      <ul class="list-group list-group-flush">
+        {% for cat in categories %}
+        <li class="list-group-item">{{ cat.name }}</li>
+        {% empty %}
+        <li class="list-group-item">No categories available</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">Devices by Zone</div>
+      <ul class="list-group list-group-flush">
+        {% for zone in zones %}
+        <li class="list-group-item">{{ zone.name }}</li>
+        {% empty %}
+        <li class="list-group-item">No zones available</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">Alerts This Week</div>
+      <div class="card-body">
+        <span class="badge bg-danger">Critical: {{ alert_count }}</span>
+        <span class="badge bg-warning text-dark">High: {{ alert_count }}</span>
+        <span class="badge bg-info text-dark">Medium: {{ alert_count }}</span>
+        <p class="mt-2 small text-muted">* Severity criteria configurable</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Last 10 Measurements</div>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Date/Time</th><th>Device</th><th>Value</th></tr></thead>
+        <tbody>
+          {% for m in latest_measurements %}
+          <tr>
+            <td>{{ m.timestamp|date:"Y-m-d H:i" }}</td>
+            <td>{{ m.device.name }}</td>
+            <td>{{ m.consumption }} kWh</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3">No measurements available</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Recent Alerts</div>
+      <ul class="list-group list-group-flush">
+        {% for a in recent_alerts %}
+        <li class="list-group-item">
+          {{ a.device.name }} - {{ a.message }}
+          <span class="badge bg-dark float-end">{{ a.timestamp|date:"H:i" }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No recent alerts</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
