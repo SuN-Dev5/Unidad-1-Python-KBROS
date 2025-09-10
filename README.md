@@ -15,8 +15,8 @@ GABO: H13, H01, H09, H05, H12
 
 https://drive.google.com/file/d/1mJLqgB0AHjPF9YU2ctShgueOuKjpuifm/view?usp=sharing
 
-CRUD Measurement
-CRUD Device
-Edit Profile
-Edit Organization
-Add Alert
+H09 CRUD Measurement
+H10 CRUD Device
+H11 Edit Profile
+H12 Edit Organization
+H13 Add Alert
