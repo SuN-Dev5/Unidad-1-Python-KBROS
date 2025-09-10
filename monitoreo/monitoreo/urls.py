@@ -28,6 +28,6 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     path('devices/', device_list, name='device_list'),
     path('devices/', measurement_list, name='measurement_list'),
-    path('login/', login_view, name='login'),
-    path('register/', register_view, name='register'),
+    path('devices/login/', login_view, name='login'),
+    path('devices/register/', register_view, name='register'),
 ]
