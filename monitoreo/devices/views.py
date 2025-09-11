@@ -1,8 +1,8 @@
 from django.shortcuts import render , redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from .models import Device , Measurement , Zone , Category, Alert
-from .forms import DeviceForm
-
+from .forms import DeviceForm, UserUpdateForm
+from django.contrib.auth.decorators import login_required
 
 def start(request):
     # dispositivos = Dispositivo.objects.all()
@@ -115,3 +115,15 @@ def delete_device(request, pk):
         return redirect('list_device')
 
     return render(request, 'devices/delete_confirm.html', {'device': device})
+
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = UserUpdateForm(instance=user)
+
+    return render(request, 'devices/edit_profile.html', {'form': form})
