@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from .models import Device , Measurement , Zone , Category, Alert
-from .forms import DeviceForm
+from .forms import DeviceForm, UserUpdateForm
+from django.contrib.auth.decorators import login_required
 
 def start(request):
     # dispositivos = Dispositivo.objects.all()
@@ -92,6 +93,7 @@ def login_view(request):
     return render(request, 'devices/login.html')
 
 def register_view(request):
+  
     if request.method == 'POST':
         company_name = request.POST['company_name']
         email = request.POST['email']
@@ -158,3 +160,24 @@ def delete_device(request, pk):
         return redirect('list_device')
 
     return render(request, 'devices/delete_confirm.html', {'device': device})
+
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = UserUpdateForm(instance=user)
+
+    return render(request, 'devices/edit_profile.html', {'form': form})
+  
+def password_reset(request):
+    message_sent = False
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        message_sent = True
+
+    return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
