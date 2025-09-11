@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from devices.views import start, Device, create_device, dashboard, device_list, measurement_list, login_view, register_view, device_detail, update_device, delete_device, edit_profile, password_reset
+from devices.views import start, Device, create_device, dashboard, device_list, measurement_list, login_view, register_view, device_detail, update_device, delete_device, edit_profile, password_reset, create_measurement
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,7 +29,8 @@ urlpatterns = [
     path('devices/create/', create_device, name='create_device'),
     path('dashboard/', dashboard, name='dashboard'),
     path('devices/', device_list, name='device_list'),
-    path('measurement/', measurement_list, name='measurement_list'),
+    path('measurements/', measurement_list, name='measurement_list'),
+    path('measurements/create/', create_measurement, name='create_measurement'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('password_reset/', password_reset, name='password_reset'),
