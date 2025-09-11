@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from devices.views import start, Device, create_device, dashboard, device_list, measurement_list, login_view, register_view, device_detail, update_device, delete_device, edit_profile
+from devices.views import start, Device, create_device, dashboard, device_list, measurement_list, login_view, register_view, device_detail, update_device, delete_device, edit_profile, password_reset
 
 from django.conf import settings
 from django.conf.urls.static import static
