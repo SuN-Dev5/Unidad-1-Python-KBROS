@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from .models import Device , Measurement , Zone , Category, Alert
-from .forms import DeviceForm, UserUpdateForm
+from .forms import DeviceForm, UserUpdateForm, MeasurementForm
 from django.contrib.auth.decorators import login_required
 
 def start(request):
@@ -72,11 +72,31 @@ def device_detail(request, pk):
     return render(request, 'devices/device_detail.html', {'device': device})
 
 def measurement_list(request):
+    # Obtener todas las mediciones ordenadas descendentemente por fecha
+    measurements = Measurement.objects.select_related('device', 'device__category', 'device__zone').order_by('-date')
     
-    devices = Device.objects.select_related("category")
+    # Paginación simple (máximo 50 registros)
+    from django.core.paginator import Paginator
+    paginator = Paginator(measurements, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
-    return render(request, "devices/start.html", {"devices": devices})
+    context = {
+        'measurements': page_obj,
+    }
+    
+    return render(request, "devices/measurement_list.html", context)
 
+def create_measurement(request):
+    if request.method == 'POST':
+        form = MeasurementForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('measurement_list')
+    else:
+        form = MeasurementForm()
+
+    return render(request, 'devices/create_measurement.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
