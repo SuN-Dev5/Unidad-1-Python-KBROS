@@ -9,9 +9,9 @@ Gmail: gabrielbstmx0@gmail.com
 Password: 12345
 
 HISTORIAS DE USUARIO:
-SEBA: H02, H08 , H10 ,H11
-MARTIN: H06 , H07 , H03, H04
-GABO: H13, H01, H09, H05, H12
+SEBA: HU2, HU8 , HU10 ,HU11
+MARTIN: HU6 , HU7 , HU3, HU4
+GABO: HU13, HU1, HU9, HU5, HU12
 
 https://drive.google.com/file/d/1mJLqgB0AHjPF9YU2ctShgueOuKjpuifm/view?usp=sharing
 
