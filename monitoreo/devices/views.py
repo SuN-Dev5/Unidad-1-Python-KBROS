@@ -48,7 +48,7 @@ def device_list(request):
     
     devices = Device.objects.select_related("category")
     
-    return render(request, "devices/start.html", {"devices": devices})
+    return render(request, "devices/device.html", {"devices": devices})
 
 def measurement_list(request):
     

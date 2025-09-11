@@ -22,12 +22,11 @@ from devices.views import start, Device, create_device, dashboard, device_list ,
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', start, name="start"),
-    path('devices/', start, name="devices"),
     path('devices/<int:device_id>/', Device, name="device"),
     path('devices/create/',create_device, name="create_device"),
     path('dashboard/', dashboard, name='dashboard'),
     path('devices/', device_list, name='device_list'),
-    path('devices/', measurement_list, name='measurement_list'),
+    path('measurement/', measurement_list, name='measurement_list'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
 ]
