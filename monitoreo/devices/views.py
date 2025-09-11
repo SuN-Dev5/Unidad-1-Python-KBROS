@@ -92,6 +92,7 @@ def login_view(request):
     return render(request, 'devices/login.html')
 
 def register_view(request):
+  
     if request.method == 'POST':
         company_name = request.POST['company_name']
         email = request.POST['email']
@@ -158,3 +159,12 @@ def delete_device(request, pk):
         return redirect('list_device')
 
     return render(request, 'devices/delete_confirm.html', {'device': device})
+  
+def password_reset(request):
+    message_sent = False
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        message_sent = True
+
+    return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
