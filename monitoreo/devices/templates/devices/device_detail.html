@@ -29,16 +29,20 @@
             <li class="list-group-item"><strong>Categoría:</strong> {{ device.category.name }}</li>
             <li class="list-group-item"><strong>Zona:</strong> {{ device.zone.name }}</li>
             <li class="list-group-item">
-    {% if device.category.name == "Sensor" %}
-        <img src="/media/assets/sensor.webp" alt="Imagen Sensor" style="max-width: 300px;">
-    {% elif device.category.name == "Temperatura" %}
-        <img src="/media/assets/termometro.webp" alt="Imagen Termómetro" style="max-width: 300px;">
-    {% else %}
-        <img src="/media/assets/default.webp" alt="Imagen por defecto" style="max-width: 300px;">
-    {% endif %}
+                {% if device.category.name == "Sensor" %}
+                    <img src="/media/assets/sensor.webp" alt="Imagen Sensor" style="max-width: 300px;">
+                {% elif device.category.name == "Temperatura" %}
+                    <img src="/media/assets/termometro.webp" alt="Imagen Termómetro" style="max-width: 300px;">
+                {% else %}
+                    <img src="/media/assets/default.webp" alt="Imagen por defecto" style="max-width: 300px;">
+                {% endif %}
             </li>
         </ul>
-        <a href="{% url 'device_list' %}" class="btn btn-secondary mt-3">Volver al listado</a>
+        <div class="mt-4">
+            <a href="{% url 'update_device' device.pk %}" class="btn btn-primary me-2">Editar</a>
+            <a href="{% url 'delete_device' device.pk %}" class="btn btn-danger">Eliminar</a>
+            <a href="{% url 'device_list' %}" class="btn btn-secondary ms-2">Volver al listado</a>
+        </div>
     </div>
 
     <footer class="bg-dark text-light text-center p-3 mt-5">
