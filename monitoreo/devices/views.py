@@ -59,16 +59,18 @@ def measurement_list(request):
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
             return redirect('dashboard')
         else:
-            return render(request, 'login.html', {'error': 'Usuario o contraseña incorrectos'})
-    return render(request, 'login.html')
+            return render(request, 'devices/login.html', {'error': 'Email o contraseña incorrectos'})
+    
+    # Caso GET: cuando alguien visita la página por primera vez
+    return render(request, 'devices/login.html')
 
 def register_view(request):
     # Aquí iría la lógica de registro (crear usuario)
-    return render(request, 'register.html')
+    return render(request, 'devices/register.html')
