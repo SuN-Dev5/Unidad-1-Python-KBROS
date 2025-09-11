@@ -1,5 +1,7 @@
 from django.shortcuts import render , redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
+from django.db import IntegrityError
+from django.contrib.auth.models import User
 from .models import Device , Measurement , Zone , Category, Alert
 from .forms import DeviceForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
@@ -91,7 +93,50 @@ def login_view(request):
     return render(request, 'devices/login.html')
 
 def register_view(request):
-    # Aquí iría la lógica de registro (crear usuario)
+  
+    if request.method == 'POST':
+        company_name = request.POST['company_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        password_confirm = request.POST['password_confirm']
+        
+        # Validar que las contraseñas coincidan
+        if password != password_confirm:
+            return render(request, 'devices/register.html', {
+                'error': 'Las contraseñas no coinciden'
+            })
+        
+        # Validar longitud de contraseña
+        if len(password) < 12:
+            return render(request, 'devices/register.html', {
+                'error': 'La contraseña debe tener al menos 12 caracteres'
+            })
+        
+        try:
+            # Crear usuario usando email como username
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=company_name
+            )
+            
+            # Mensaje de éxito
+            return render(request, 'devices/register.html', {
+                'success': f'¡Registro exitoso! La empresa {company_name} ha sido registrada correctamente.'
+            })
+            
+        except IntegrityError:
+            return render(request, 'devices/register.html', {
+                'error': 'Este correo electrónico ya está registrado'
+            })
+        
+        except Exception as e:
+            return render(request, 'devices/register.html', {
+                'error': 'Error al registrar la empresa. Intenta nuevamente.'
+            })
+    
+    # Caso GET: mostrar formulario
     return render(request, 'devices/register.html')
 
 def update_device(request, pk):
@@ -127,3 +172,12 @@ def edit_profile(request):
         form = UserUpdateForm(instance=user)
 
     return render(request, 'devices/edit_profile.html', {'form': form})
+  
+def password_reset(request):
+    message_sent = False
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        message_sent = True
+
+    return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
