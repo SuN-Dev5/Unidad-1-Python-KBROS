@@ -65,11 +65,27 @@ def device_list(request):
     return render(request, "devices/device.html", context)
 
 
+@login_required
 def device_detail(request, pk):
-    
     device = get_object_or_404(Device, pk=pk)
     
-    return render(request, 'devices/device_detail.html', {'device': device})
+    # Obtener mediciones ordenadas por fecha descendente
+    measurements = Measurement.objects.filter(
+        device=device
+    ).order_by('-date')[:10]  # Últimas 10 mediciones
+    
+    # Obtener alertas del dispositivo ordenadas por fecha descendente
+    alerts = Alert.objects.filter(
+        device=device
+    ).order_by('-date')[:10]  # Últimas 10 alertas
+    
+    context = {
+        'device': device,
+        'measurements': measurements,
+        'alerts': alerts,
+    }
+    
+    return render(request, 'devices/device_detail.html', context)
 
 def measurement_list(request):
     
