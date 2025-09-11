@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from devices.views import start, Device, create_device, dashboard, device_list , measurement_list, login_view , register_view
+from devices.views import start, Device, create_device, dashboard, device_list , measurement_list, login_view , register_view, password_reset
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +30,5 @@ urlpatterns = [
     path('devices/', measurement_list, name='measurement_list'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
+    path('password_reset/', password_reset, name='password_reset'),
 ]

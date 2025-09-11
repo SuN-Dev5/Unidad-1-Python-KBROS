@@ -72,3 +72,13 @@ def login_view(request):
 def register_view(request):
     # Aquí iría la lógica de registro (crear usuario)
     return render(request, 'register.html')
+
+def password_reset(request):
+    message_sent = False
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        # Simulate sending password reset email (U1 requirement)
+        message_sent = True
+
+    return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
