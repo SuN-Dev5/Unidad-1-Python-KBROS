@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>EcoEnergy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">EcoEnergy</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'device_list' %}">Dispositivos</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Detalle del Dispositivo</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Nombre:</strong> {{ device.name }}</li>
+            <li class="list-group-item"><strong>Categoría:</strong> {{ device.category.name }}</li>
+            <li class="list-group-item"><strong>Zona:</strong> {{ device.zone.name }}</li>
+            <li class="list-group-item">
+    {% if device.category.name == "Sensor" %}
+        <img src="/media/assets/sensor.webp" alt="Imagen Sensor" style="max-width: 300px;">
+    {% elif device.category.name == "Temperatura" %}
+        <img src="/media/assets/termometro.webp" alt="Imagen Termómetro" style="max-width: 300px;">
+    {% else %}
+        <img src="/media/assets/default.webp" alt="Imagen por defecto" style="max-width: 300px;">
+    {% endif %}
+            </li>
+        </ul>
+        <a href="{% url 'device_list' %}" class="btn btn-secondary mt-3">Volver al listado</a>
+    </div>
+
+    <footer class="bg-dark text-light text-center p-3 mt-5">
+        <p class="mb-0">© 2025 EcoEnergy</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

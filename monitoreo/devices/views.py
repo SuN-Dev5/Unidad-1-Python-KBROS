@@ -1,4 +1,4 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render , redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from .models import Device , Measurement , Zone , Category, Alert
 from .forms import DeviceForm
@@ -45,10 +45,28 @@ def dashboard(request):
     })
     
 def device_list(request):
+    categories = Category.objects.all()  # Obtener todas las categorías para el filtro
+
+    selected_category = request.GET.get('category', '')  # Obtener categoría seleccionada (vacío si no hay)
+
+    devices = Device.objects.select_related("category", "zone")
+
+    if selected_category:
+        devices = devices.filter(category_id=selected_category)
+
+    context = {
+        "devices": devices,
+        "categories": categories,
+        "selected_category": selected_category,
+    }
+    return render(request, "devices/device.html", context)
+
+
+def device_detail(request, pk):
     
-    devices = Device.objects.select_related("category")
+    device = get_object_or_404(Device, pk=pk)
     
-    return render(request, "devices/start.html", {"devices": devices})
+    return render(request, 'devices/device_detail.html', {'device': device})
 
 def measurement_list(request):
     
