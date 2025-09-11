@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
-from devices.views import start, Device, create_device, dashboard, device_list , measurement_list, login_view , register_view
+from devices.views import start, Device, create_device, dashboard, device_list , measurement_list, login_view , register_view , device_detail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,8 @@ urlpatterns = [
     path('measurement/', measurement_list, name='measurement_list'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
+    path('<int:pk>/', device_detail, name='device_detail'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
