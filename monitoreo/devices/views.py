@@ -11,6 +11,7 @@ def start(request):
     return render(request, "devices/start.html", {"devices": devices})
 
 def device(request, device_id):
+    
     device = Device.objects.get(id=device_id)
 
     return render(request, "devices/device.html", {"device": device})
@@ -92,3 +93,25 @@ def login_view(request):
 def register_view(request):
     # Aquí iría la lógica de registro (crear usuario)
     return render(request, 'devices/register.html')
+
+def update_device(request, pk):
+    
+    device = get_object_or_404(Device, pk=pk)
+    if request.method == 'POST':
+        form = DeviceForm(request.POST, instance=device)
+        if form.is_valid():
+            form.save()
+            return redirect('device_detail', pk=device.pk)
+    else:
+        form = DeviceForm(instance=device)
+
+    return render(request, 'devices/update_device.html', {'form': form, 'device': device})
+
+def delete_device(request, pk):
+    
+    device = get_object_or_404(Device, pk=pk)
+    if request.method == 'POST':
+        device.delete()
+        return redirect('list_device')
+
+    return render(request, 'devices/delete_confirm.html', {'device': device})
