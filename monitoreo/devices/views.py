@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from .models import Device , Measurement , Zone , Category, Alert
 from .forms import DeviceForm, UserUpdateForm, MeasurementForm
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count
 
 def start(request):
     # dispositivos = Dispositivo.objects.all()
@@ -30,21 +33,57 @@ def create_device(request):
     return render(request, 'devices/create.html', {'form': form})
 
 def dashboard(request):
-    latest_measurements = Measurement.objects.order_by('-date')[:10]
-    recent_alerts = Alert.objects.order_by('-date')[:5]
-    alert_count = Alert.objects.count()  # 👉 muestra todas las alertas, sin filtrar por semana
-
-    categories = Category.objects.all()
-    zones = Zone.objects.all()
-    devices = Device.objects.all()
+    organization = request.user.organization
+    
+    # Últimas 10 mediciones
+    latest_measurements = Measurement.objects.filter(
+        organization=organization
+    ).select_related('device').order_by('-date')[:10]
+    
+    # Alertas de la semana (últimos 7 días)
+    one_week_ago = timezone.now() - timedelta(days=7)
+    
+    # Conteo de alertas por severidad
+    alert_counts = {
+        'high': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='high'
+        ).count(),
+        'medium': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='medium'
+        ).count(),
+        'low': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='low'
+        ).count(),
+    }
+    
+    # Alertas recientes (esta semana)
+    recent_alerts = Alert.objects.filter(
+        organization=organization,
+        date__gte=one_week_ago
+    ).select_related('device').order_by('-date')[:5]
+    
+    # Conteos generales
+    devices_count = Device.objects.filter(organization=organization).count()
+    categories = Category.objects.filter(organization=organization).annotate(
+        device_count=Count('device')
+    )
+    zones = Zone.objects.filter(organization=organization).annotate(
+        device_count=Count('device')
+    )
 
     return render(request, 'devices/dashboard.html', {
         'latest_measurements': latest_measurements,
         'recent_alerts': recent_alerts,
-        'alert_count': alert_count,
+        'alert_counts': alert_counts,
+        'devices_count': devices_count,
         'categories': categories,
         'zones': zones,
-        'devices': devices
     })
     
 def device_list(request):

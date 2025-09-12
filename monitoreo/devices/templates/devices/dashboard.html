@@ -1,79 +1,201 @@
 {% extends 'devices/base.html' %}
 {% block content %}
-<h2>Dashboard</h2>
+<div class="container mt-4">
+    <h2>Dashboard - {{ user.organization.name }}</h2>
+    
+    <!-- Tarjetas de resumen con enlaces -->
+    <div class="row mb-4">
+        <!-- Dispositivos por Categoría -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ categories|length }}</h5>
+                    <p class="card-text">Categorías</p>
+                    <a href="{% url 'device_list' %}" class="text-white small">Ver dispositivos →</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dispositivos por Zona -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ zones|length }}</h5>
+                    <p class="card-text">Zonas</p>
+                    <a href="{% url 'device_list' %}" class="text-white small">Ver dispositivos →</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Dispositivos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ devices_count }}</h5>
+                    <p class="card-text">Dispositivos Totales</p>
+                    <a href="{% url 'device_list' %}" class="text-white small">Ver todos →</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-  <div class="col-md-4">
-    <div class="card mb-3">
-      <div class="card-header">Devices by Category</div>
-      <ul class="list-group list-group-flush">
-        {% for cat in categories %}
-        <li class="list-group-item">{{ cat.name }}</li>
-        {% empty %}
-        <li class="list-group-item">No categories available</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card mb-3">
-      <div class="card-header">Devices by Zone</div>
-      <ul class="list-group list-group-flush">
-        {% for zone in zones %}
-        <li class="list-group-item">{{ zone.name }}</li>
-        {% empty %}
-        <li class="list-group-item">No zones available</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card mb-3">
-      <div class="card-header">Alerts This Week</div>
-      <div class="card-body">
-        <span class="badge bg-danger">Critical: {{ alert_count }}</span>
-        <span class="badge bg-warning text-dark">High: {{ alert_count }}</span>
-        <span class="badge bg-info text-dark">Medium: {{ alert_count }}</span>
-        <p class="mt-2 small text-muted">* Severity criteria configurable</p>
-      </div>
-    </div>
-  </div>
-</div>
+    <!-- Fila principal: Alertas y Mediciones -->
+    <div class="row mb-4">
+        <!-- Alertas de la semana -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Alertas de la Semana</h5>
+                    <a href="{% url 'add_alert' %}" class="btn btn-sm btn-warning">+ Agregar</a>
+                </div>
+                <div class="card-body">
+                    <!-- Badges de severidad -->
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-center">
+                            <span class="badge bg-danger p-2">Grave: {{ alert_counts.high }}</span>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <span class="badge bg-warning p-2">Alta: {{ alert_counts.medium }}</span>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <span class="badge bg-info p-2">Media: {{ alert_counts.low }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de alertas recientes -->
+                    {% if recent_alerts %}
+                    <div class="mt-3">
+                        <h6>Últimas Alertas:</h6>
+                        <div class="list-group">
+                            {% for alert in recent_alerts %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ alert.device.name }}</strong>
+                                        <br>
+                                        <small>{{ alert.message }}</small>
+                                    </div>
+                                    <span class="badge bg-{% if alert.severity == 'high' %}danger{% elif alert.severity == 'medium' %}warning{% else %}info{% endif %}">
+                                        {{ alert.get_severity_display }}
+                                    </span>
+                                </div>
+                                <small class="text-muted">{{ alert.date|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mt-3">No hay alertas esta semana</p>
+                    {% endif %}
+                    
+                    <!-- Link para ver más alertas -->
+                    {% if alert_counts.high or alert_counts.medium or alert_counts.low %}
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary">Ver todas las alertas</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-<div class="row mt-4">
-  <div class="col-md-6">
-    <div class="card mb-3">
-      <div class="card-header">Last 10 Measurements</div>
-      <table class="table table-sm mb-0">
-        <thead><tr><th>Date/Time</th><th>Device</th><th>Value</th></tr></thead>
-        <tbody>
-          {% for m in latest_measurements %}
-          <tr>
-            <td>{{ m.timestamp|date:"Y-m-d H:i" }}</td>
-            <td>{{ m.device.name }}</td>
-            <td>{{ m.consumption }} kWh</td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="3">No measurements available</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <!-- Últimas mediciones -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Últimas 10 Mediciones</h5>
+                    <a href="{% url 'create_measurement' %}" class="btn btn-sm btn-success">+ Agregar</a>
+                </div>
+                <div class="card-body">
+                    {% if latest_measurements %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Dispositivo</th>
+                                    <th>Consumo</th>
+                                    <th>Fecha/Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for measurement in latest_measurements %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'device_detail' measurement.device.id %}" class="text-decoration-none">
+                                            {{ measurement.device.name }}
+                                        </a>
+                                    </td>
+                                    <td><strong>{{ measurement.consumption }} kWh</strong></td>
+                                    <td>{{ measurement.date|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end">
+                        <a href="{% url 'measurement_list' %}" class="btn btn-sm btn-primary">Ver todas las mediciones</a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No hay mediciones registradas</p>
+                        <a href="{% url 'create_measurement' %}" class="btn btn-sm btn-success">Agregar primera medición</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card mb-3">
-      <div class="card-header">Recent Alerts</div>
-      <ul class="list-group list-group-flush">
-        {% for a in recent_alerts %}
-        <li class="list-group-item">
-          {{ a.device.name }} - {{ a.message }}
-          <span class="badge bg-dark float-end">{{ a.timestamp|date:"H:i" }}</span>
-        </li>
-        {% empty %}
-        <li class="list-group-item">No recent alerts</li>
-        {% endfor %}
-      </ul>
+
+    <!-- Sección adicional: Resumen por categorías y zonas -->
+    <div class="row">
+        <!-- Dispositivos por Categoría (detallado) -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Dispositivos por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    {% if categories %}
+                    <div class="list-group">
+                        {% for category in categories %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ category.name }}
+                            <span class="badge bg-primary rounded-pill">
+                                {{ category.device_set.count }} dispositivos
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay categorías registradas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispositivos por Zona (detallado) -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Dispositivos por Zona</h5>
+                </div>
+                <div class="card-body">
+                    {% if zones %}
+                    <div class="list-group">
+                        {% for zone in zones %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ zone.name }}
+                            <span class="badge bg-success rounded-pill">
+                                {{ zone.device_set.count }} dispositivos
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay zonas registradas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}
