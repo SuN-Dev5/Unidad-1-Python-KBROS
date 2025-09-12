@@ -91,7 +91,7 @@
                     <!-- Link para ver más alertas -->
                     {% if alert_counts.high or alert_counts.medium or alert_counts.low %}
                     <div class="mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Ver todas las alertas</a>
+                        <a href="{% url 'alert_summary' %}" class="btn btn-sm btn-outline-primary">Ver todas las alertas de la semana</a>
                     </div>
                     {% endif %}
                 </div>
