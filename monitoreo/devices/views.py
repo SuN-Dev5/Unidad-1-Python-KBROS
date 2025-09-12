@@ -217,3 +217,40 @@ def password_reset(request):
         message_sent = True
 
     return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
+
+def add_alert(request, device_id=None):
+    # Verificar autenticación
+    if not request.user.is_authenticated:
+        return redirect('login_view')
+    
+    device = None
+    if device_id:
+        device = get_object_or_404(Device, id=device_id, organization=request.user.organization)
+    
+    if request.method == 'POST':
+        # Crear alerta manualmente desde el formulario
+        device_id = request.POST.get('device')
+        message = request.POST.get('message')
+        severity = request.POST.get('severity')
+        
+        device = Device.objects.get(id=device_id, organization=request.user.organization)
+        
+        Alert.objects.create(
+            device=device,
+            message=message,
+            severity=severity,
+            organization=request.user.organization
+        )
+        
+        if device_id:
+            return redirect('device_detail', pk=device_id)
+        return redirect('alert_summary')
+    
+    # Si es GET, mostrar formulario
+    devices = Device.objects.filter(organization=request.user.organization)
+    
+    return render(request, 'devices/alert_form.html', {
+        'devices': devices,
+        'device': device,
+        'title': 'Agregar Alerta' if not device else f'Agregar Alerta para {device.name}'
+    })
