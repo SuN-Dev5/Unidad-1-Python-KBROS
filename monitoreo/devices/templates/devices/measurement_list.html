@@ -6,11 +6,10 @@
         <h1 class="mb-4">Listado Global de Mediciones</h1>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-
-    <a href="{% url 'create_measurement' %}" class="btn btn-success">
-        <i class="fas fa-plus"></i> Nueva Medición
-    </a>
-</div>
+            <a href="{% url 'create_measurement' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Nueva Medición
+            </a>
+        </div>
         
         <!-- Tabla responsiva con Bootstrap -->
         <div class="table-responsive">
@@ -20,6 +19,7 @@
                         <th scope="col">Fecha/Hora</th>
                         <th scope="col">Valor (kWh)</th>
                         <th scope="col">Dispositivo</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,10 +38,24 @@
                                 {{ measurement.device.category.name }} - {{ measurement.device.zone.name }}
                             </small>
                         </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'measurement_edit' measurement.pk %}" 
+                                   class="btn btn-outline-primary" 
+                                   title="Editar medición">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'measurement_delete' measurement.pk %}" 
+                                   class="btn btn-outline-danger" 
+                                   title="Eliminar medición">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center text-muted fst-italic py-4">
+                        <td colspan="4" class="text-center text-muted fst-italic py-4">
                             <i class="fas fa-info-circle me-2"></i>
                             No hay mediciones registradas.
                         </td>
