@@ -1,0 +1,154 @@
+{% extends "devices/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Card principal -->
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>
+                        {{ title|default:"Agregar Alerta" }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Formulario -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Campo Dispositivo (solo si no viene de un dispositivo específico) -->
+                        {% if not device %}
+                        <div class="mb-3">
+                            <label for="device" class="form-label fw-bold">
+                                <i class="fas fa-microchip me-1"></i>Seleccionar Dispositivo
+                            </label>
+                            <select class="form-select" id="device" name="device" required>
+                                <option value="">-- Seleccione un dispositivo --</option>
+                                {% for dev in devices %}
+                                <option value="{{ dev.id }}">{{ dev.name }} ({{ dev.category.name }} - {{ dev.zone.name }})</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Seleccione el dispositivo asociado a esta alerta.</div>
+                        </div>
+                        {% else %}
+                        <input type="hidden" name="device" value="{{ device.id }}">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <strong>Dispositivo:</strong> {{ device.name }} ({{ device.category.name }} - {{ device.zone.name }})
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Campo Mensaje -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label fw-bold">
+                                <i class="fas fa-comment me-1"></i>Mensaje de la Alerta
+                            </label>
+                            <textarea class="form-control" 
+                                      id="message" 
+                                      name="message" 
+                                      rows="4" 
+                                      required 
+                                      placeholder="Describa el motivo de la alerta..."
+                                      maxlength="200"></textarea>
+                            <div class="form-text">Máximo 200 caracteres. Sea claro y descriptivo.</div>
+                        </div>
+                        
+                        <!-- Campo Severidad -->
+                        <div class="mb-4">
+                            <label for="severity" class="form-label fw-bold">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Nivel de Severidad
+                            </label>
+                            <select class="form-select" id="severity" name="severity" required>
+                                <option value="">-- Seleccione la severidad --</option>
+                                <option value="high">
+                                    🔴 Grave - Problema crítico que requiere atención inmediata
+                                </option>
+                                <option value="medium">
+                                    🟡 Alta - Problema importante que necesita revisión
+                                </option>
+                                <option value="low">
+                                    🔵 Media - Situación que merece monitoreo
+                                </option>
+                            </select>
+                            <div class="form-text">La severidad determina la prioridad de la alerta.</div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            {% if device %}
+                            <a href="{% url 'device_detail' device.id %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Volver al Dispositivo
+                            </a>
+                            {% else %}
+                            <a href="{% url 'alert_summary' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-bell me-1"></i> Crear Alerta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Información de ayuda -->
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-lightbulb me-1"></i>Tipos de Alertas Recomendadas
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card bg-danger text-white mb-2">
+                                <div class="card-body p-2">
+                                    <small><strong>🔴 Grave</strong></small>
+                                    <small>• Consumo excesivo<br>• Dispositivo offline<br>• Fallas críticas</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-warning text-dark mb-2">
+                                <div class="card-body p-2">
+                                    <small><strong>🟡 Alta</strong></small>
+                                    <small>• Alto consumo<br>• fluctuaciones<br>• Mantenimiento needed</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white mb-2">
+                                <div class="card-body p-2">
+                                    <small><strong>🔵 Media</strong></small>
+                                    <small>• Consumo elevado<br>• Alertas preventivas<br>• Notificaciones</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 10px;
+}
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+.form-label {
+    color: #495057;
+    font-weight: 600;
+}
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+}
+select option {
+    padding: 8px;
+}
+</style>
+{% endblock %}
