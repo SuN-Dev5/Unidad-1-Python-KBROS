@@ -1,0 +1,144 @@
+{% extends "devices/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Card principal -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-building me-2"></i>
+                        {{ title|default:"Editar Organización" }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Formulario -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Campo Nombre -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">
+                                <i class="fas fa-signature me-1"></i>Nombre de la Organización
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name" 
+                                   value="{{ organization.name }}" 
+                                   required
+                                   placeholder="Ingrese el nombre de su empresa">
+                            <div class="form-text">Este es el nombre que aparecerá en el dashboard y reportes.</div>
+                        </div>
+                        
+                        <!-- Campo Estado -->
+                        <div class="mb-4">
+                            <label for="status" class="form-label fw-bold">
+                                <i class="fas fa-status me-1"></i>Estado de la Organización
+                            </label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="ACTIVE" {% if organization.status == 'ACTIVE' %}selected{% endif %}>
+                                    🟢 Activa - La organización está operativa
+                                </option>
+                                <option value="INACTIVE" {% if organization.status == 'INACTIVE' %}selected{% endif %}>
+                                    🔴 Inactiva - La organización está pausada
+                                </option>
+                            </select>
+                            <div class="form-text">El estado afecta la visualización de datos en el sistema.</div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Información adicional -->
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle me-1"></i>Información de la Organización
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="card-text mb-1">
+                                <small class="text-muted">
+                                    <strong><i class="fas fa-id-card me-1"></i>ID:</strong> {{ organization.id }}
+                                </small>
+                            </p>
+                            <p class="card-text mb-1">
+                                <small class="text-muted">
+                                    <strong><i class="fas fa-calendar-plus me-1"></i>Creado:</strong> {{ organization.created_at|date:"d/m/Y H:i" }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="card-text mb-1">
+                                <small class="text-muted">
+                                    <strong><i class="fas fa-calendar-check me-1"></i>Actualizado:</strong> {{ organization.updated_at|date:"d/m/Y H:i" }}
+                                </small>
+                            </p>
+                            <p class="card-text mb-0">
+                                <small class="text-muted">
+                                    <strong><i class="fas fa-database me-1"></i>Estado actual:</strong> 
+                                    <span class="badge bg-{% if organization.status == 'ACTIVE' %}success{% else %}secondary{% endif %}">
+                                        {{ organization.get_status_display }}
+                                    </span>
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tarjeta de ayuda -->
+            <div class="card mt-3 border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-question-circle me-1"></i>¿Qué significa cada estado?
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <span class="badge bg-success me-2">Activa</span>
+                            <small>La organización está operando normalmente. Todos los datos son visibles y se pueden realizar mediciones.</small>
+                        </li>
+                        <li>
+                            <span class="badge bg-secondary me-2">Inactiva</span>
+                            <small>La organización está pausada. Los datos históricos son visibles pero no se pueden agregar nuevas mediciones.</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 10px;
+}
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+.form-label {
+    color: #495057;
+    font-weight: 600;
+}
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+}
+</style>
+{% endblock %}
