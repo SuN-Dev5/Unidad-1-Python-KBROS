@@ -217,3 +217,31 @@ def password_reset(request):
         message_sent = True
 
     return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
+    
+def edit_organization(request):
+    # Verificar autenticación
+    if not request.user.is_authenticated:
+        return redirect('login_view')
+    
+    if not hasattr(request.user, 'organization') or not request.user.organization:
+        return redirect('dashboard')
+    
+    organization = request.user.organization
+    
+    if request.method == 'POST':
+        # Actualizar organización manualmente desde el formulario
+        new_name = request.POST.get('name')
+        new_status = request.POST.get('status')
+        
+        organization.name = new_name
+        organization.status = new_status
+        organization.save()
+        
+        # Mensaje de éxito
+        messages.success(request, '✅ Organización actualizada correctamente')
+        return redirect('dashboard')
+    
+    return render(request, 'devices/organization_form.html', {
+        'organization': organization,
+        'title': 'Editar Organización'
+    })
