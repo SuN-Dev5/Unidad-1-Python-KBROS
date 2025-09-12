@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.contrib.auth.models import User
-from .models import Device, Measurement, Zone, Category, Alert, Organization  # ← Asegúrate de importar Organization
+from .models import Device, Measurement, Zone, Category, Alert, Organization  
 from .forms import DeviceForm, UserUpdateForm, MeasurementForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -28,7 +28,7 @@ def create_device(request):
     return render(request, 'devices/create.html', {'form': form})
 
 def dashboard(request):
-    # ✅ VERIFICACIÓN DE AUTENTICACIÓN Y ORGANIZACIÓN
+    #  VERIFICACIÓN DE AUTENTICACIÓN Y ORGANIZACIÓN
     if not request.user.is_authenticated:
         return redirect('login_view')
     
