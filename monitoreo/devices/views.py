@@ -1,21 +1,20 @@
-from django.shortcuts import render , redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.contrib.auth.models import User
-from .models import Device , Measurement , Zone , Category, Alert
+from .models import Device, Measurement, Zone, Category, Alert, Organization  
 from .forms import DeviceForm, UserUpdateForm, MeasurementForm
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count
 
 def start(request):
-    # dispositivos = Dispositivo.objects.all()
-    devices = Device.objects.select_related("category")  # join
-
+    devices = Device.objects.select_related("category")
     return render(request, "devices/start.html", {"devices": devices})
 
 def device(request, device_id):
-    
     device = Device.objects.get(id=device_id)
-
     return render(request, "devices/device.html", {"device": device})
 
 def create_device(request):
@@ -26,32 +25,77 @@ def create_device(request):
             return redirect('list_device')
     else:
         form = DeviceForm()
-
     return render(request, 'devices/create.html', {'form': form})
 
 def dashboard(request):
-    latest_measurements = Measurement.objects.order_by('-date')[:10]
-    recent_alerts = Alert.objects.order_by('-date')[:5]
-    alert_count = Alert.objects.count()  # 👉 muestra todas las alertas, sin filtrar por semana
-
-    categories = Category.objects.all()
-    zones = Zone.objects.all()
-    devices = Device.objects.all()
+    #  VERIFICACIÓN DE AUTENTICACIÓN Y ORGANIZACIÓN
+    if not request.user.is_authenticated:
+        return redirect('login_view')
+    
+    if not hasattr(request.user, 'organization') or not request.user.organization:
+        # Crear organización demo si no existe
+        organization, created = Organization.objects.get_or_create(
+            name=f"Organización de {request.user.first_name or 'Demo'}"
+        )
+        request.user.organization = organization
+        request.user.save()
+    
+    organization = request.user.organization
+    
+    # Últimas 10 mediciones
+    latest_measurements = Measurement.objects.filter(
+        organization=organization
+    ).select_related('device').order_by('-date')[:10]
+    
+    # Alertas de la semana (últimos 7 días)
+    one_week_ago = timezone.now() - timedelta(days=7)
+    
+    # Conteo de alertas por severidad
+    alert_counts = {
+        'high': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='high'
+        ).count(),
+        'medium': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='medium'
+        ).count(),
+        'low': Alert.objects.filter(
+            organization=organization,
+            date__gte=one_week_ago,
+            severity='low'
+        ).count(),
+    }
+    
+    # Alertas recientes (esta semana)
+    recent_alerts = Alert.objects.filter(
+        organization=organization,
+        date__gte=one_week_ago
+    ).select_related('device').order_by('-date')[:5]
+    
+    # Conteos generales
+    devices_count = Device.objects.filter(organization=organization).count()
+    categories = Category.objects.filter(organization=organization).annotate(
+        device_count=Count('device')
+    )
+    zones = Zone.objects.filter(organization=organization).annotate(
+        device_count=Count('device')
+    )
 
     return render(request, 'devices/dashboard.html', {
         'latest_measurements': latest_measurements,
         'recent_alerts': recent_alerts,
-        'alert_count': alert_count,
+        'alert_counts': alert_counts,
+        'devices_count': devices_count,
         'categories': categories,
         'zones': zones,
-        'devices': devices
     })
-    
+
 def device_list(request):
-    categories = Category.objects.all()  # Obtener todas las categorías para el filtro
-
-    selected_category = request.GET.get('category', '')  # Obtener categoría seleccionada (vacío si no hay)
-
+    categories = Category.objects.all()
+    selected_category = request.GET.get('category', '')
     devices = Device.objects.select_related("category", "zone")
 
     if selected_category:
@@ -64,20 +108,17 @@ def device_list(request):
     }
     return render(request, "devices/device.html", context)
 
-
 @login_required
 def device_detail(request, pk):
     device = get_object_or_404(Device, pk=pk)
     
-    # Obtener mediciones ordenadas por fecha descendente
     measurements = Measurement.objects.filter(
         device=device
-    ).order_by('-date')[:10]  # Últimas 10 mediciones
+    ).order_by('-date')[:10]
     
-    # Obtener alertas del dispositivo ordenadas por fecha descendente
     alerts = Alert.objects.filter(
         device=device
-    ).order_by('-date')[:10]  # Últimas 10 alertas
+    ).order_by('-date')[:10]
     
     context = {
         'device': device,
@@ -88,10 +129,8 @@ def device_detail(request, pk):
     return render(request, 'devices/device_detail.html', context)
 
 def measurement_list(request):
-    # Obtener todas las mediciones ordenadas descendentemente por fecha
     measurements = Measurement.objects.select_related('device', 'device__category', 'device__zone').order_by('-date')
     
-    # Paginación simple (máximo 50 registros)
     from django.core.paginator import Paginator
     paginator = Paginator(measurements, 50)
     page_number = request.GET.get('page')
@@ -111,7 +150,6 @@ def create_measurement(request):
             return redirect('measurement_list')
     else:
         form = MeasurementForm()
-
     return render(request, 'devices/create_measurement.html', {'form': form})
 
 def login_view(request):
@@ -124,32 +162,26 @@ def login_view(request):
             return redirect('dashboard')
         else:
             return render(request, 'devices/login.html', {'error': 'Email o contraseña incorrectos'})
-    
-    # Caso GET: cuando alguien visita la página por primera vez
     return render(request, 'devices/login.html')
 
 def register_view(request):
-  
     if request.method == 'POST':
         company_name = request.POST['company_name']
         email = request.POST['email']
         password = request.POST['password']
         password_confirm = request.POST['password_confirm']
         
-        # Validar que las contraseñas coincidan
         if password != password_confirm:
             return render(request, 'devices/register.html', {
                 'error': 'Las contraseñas no coinciden'
             })
         
-        # Validar longitud de contraseña
         if len(password) < 12:
             return render(request, 'devices/register.html', {
                 'error': 'La contraseña debe tener al menos 12 caracteres'
             })
         
         try:
-            # Crear usuario usando email como username
             user = User.objects.create_user(
                 username=email,
                 email=email,
@@ -157,7 +189,11 @@ def register_view(request):
                 first_name=company_name
             )
             
-            # Mensaje de éxito
+            # ✅ CREAR ORGANIZACIÓN AUTOMÁTICAMENTE AL REGISTRARSE
+            organization = Organization.objects.create(name=company_name)
+            user.organization = organization
+            user.save()
+            
             return render(request, 'devices/register.html', {
                 'success': f'¡Registro exitoso! La empresa {company_name} ha sido registrada correctamente.'
             })
@@ -172,8 +208,8 @@ def register_view(request):
                 'error': 'Error al registrar la empresa. Intenta nuevamente.'
             })
     
-    # Caso GET: mostrar formulario
     return render(request, 'devices/register.html')
+
 
 def update_device(request, pk):
     
@@ -248,3 +284,4 @@ def alert_summary(request):
         'alert_counts': alert_counts,
         'one_week_ago': one_week_ago,
     })
+
