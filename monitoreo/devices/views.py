@@ -210,4 +210,78 @@ def register_view(request):
     
     return render(request, 'devices/register.html')
 
-# ... el resto de tus funciones se mantienen igual ...
+
+def update_device(request, pk):
+    
+    device = get_object_or_404(Device, pk=pk)
+    if request.method == 'POST':
+        form = DeviceForm(request.POST, instance=device)
+        if form.is_valid():
+            form.save()
+            return redirect('device_detail', pk=device.pk)
+    else:
+        form = DeviceForm(instance=device)
+
+    return render(request, 'devices/update_device.html', {'form': form, 'device': device})
+
+def delete_device(request, pk):
+    
+    device = get_object_or_404(Device, pk=pk)
+    if request.method == 'POST':
+        device.delete()
+        return redirect('list_device')
+
+    return render(request, 'devices/delete_confirm.html', {'device': device})
+
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = UserUpdateForm(instance=user)
+
+    return render(request, 'devices/edit_profile.html', {'form': form})
+  
+def password_reset(request):
+    message_sent = False
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        message_sent = True
+
+    return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
+
+
+def alert_summary(request):
+    # Verificar autenticación
+    if not request.user.is_authenticated:
+        return redirect('login_view')
+    
+    if not hasattr(request.user, 'organization') or not request.user.organization:
+        return redirect('dashboard')
+    
+    organization = request.user.organization
+    one_week_ago = timezone.now() - timedelta(days=7)
+    
+    # Alertas de la semana
+    alerts = Alert.objects.filter(
+        organization=organization,
+        date__gte=one_week_ago
+    ).select_related('device').order_by('-date')
+    
+    # Conteo por severidad
+    alert_counts = {
+        'high': alerts.filter(severity='high').count(),
+        'medium': alerts.filter(severity='medium').count(),
+        'low': alerts.filter(severity='low').count(),
+    }
+    
+    return render(request, 'devices/alert_summary.html', {
+        'alerts': alerts,
+        'alert_counts': alert_counts,
+        'one_week_ago': one_week_ago,
+    })
+
