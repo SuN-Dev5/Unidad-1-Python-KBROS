@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.contrib.auth.models import User
+
 from .models import Device, Measurement, Zone, Category, Alert, Organization
+
 from .forms import DeviceForm, UserUpdateForm, MeasurementForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count
+
 from django.contrib import messages
 
 def start(request):
@@ -29,11 +32,11 @@ def create_device(request):
     return render(request, 'devices/create.html', {'form': form})
 
 def dashboard(request):
+
     # Verificar si el usuario está autenticado
     if not request.user.is_authenticated:
         return redirect('login_view')
-    
-    # Verificar si el usuario tiene organización
+
     if not hasattr(request.user, 'organization') or not request.user.organization:
         # Crear organización demo si no existe
         organization, created = Organization.objects.get_or_create(
@@ -44,11 +47,14 @@ def dashboard(request):
     
     organization = request.user.organization
     
+
     # Últimas 10 mediciones de LA ORGANIZACIÓN
+
     latest_measurements = Measurement.objects.filter(
         organization=organization
     ).select_related('device').order_by('-date')[:10]
     
+
     # Alertas de la SEMANA actual por severidad
     one_week_ago = timezone.now() - timedelta(days=7)
     
@@ -77,20 +83,23 @@ def dashboard(request):
         date__gte=one_week_ago
     ).select_related('device').order_by('-date')[:5]
     
+
     # Conteos para las tarjetas
     devices_count = Device.objects.filter(organization=organization).count()
     categories_count = Category.objects.filter(organization=organization).count()
     zones_count = Zone.objects.filter(organization=organization).count()
+
 
     return render(request, 'devices/dashboard.html', {
         'latest_measurements': latest_measurements,
         'recent_alerts': recent_alerts,
         'alert_counts': alert_counts,
         'devices_count': devices_count,
+
         'categories_count': categories_count,
         'zones_count': zones_count,
     })
-    
+
 def device_list(request):
     categories = Category.objects.all()
     selected_category = request.GET.get('category', '')
@@ -110,8 +119,10 @@ def device_list(request):
 def device_detail(request, pk):
     device = get_object_or_404(Device, pk=pk)
     
+
     measurements = Measurement.objects.filter(device=device).order_by('-date')[:10]
     alerts = Alert.objects.filter(device=device).order_by('-date')[:10]
+
     
     context = {
         'device': device,
@@ -122,6 +133,7 @@ def device_detail(request, pk):
     return render(request, 'devices/device_detail.html', context)
 
 def measurement_list(request):
+
     # Verificar autenticación y organización
     if not request.user.is_authenticated:
         return redirect('login_view')
@@ -133,6 +145,7 @@ def measurement_list(request):
         organization=request.user.organization
     ).select_related('device', 'device__category', 'device__zone').order_by('-date')
     
+
     paginator = Paginator(measurements, 50)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -211,6 +224,7 @@ def register_view(request):
     
     return render(request, 'devices/register.html')
 
+
 def update_device(request, pk):
     device = get_object_or_404(Device, pk=pk)
     if request.method == 'POST':
@@ -247,7 +261,7 @@ def password_reset(request):
         message_sent = True
     return render(request, 'devices/password_reset.html', {'message_sent': message_sent})
 
-# ✅ HU13 - ADD ALERT (Ya la tienes)
+
 def add_alert(request, device_id=None):
     if not request.user.is_authenticated:
         return redirect('login_view')
@@ -284,6 +298,7 @@ def add_alert(request, device_id=None):
 
 # ✅ HU5 - ALERT SUMMARY
 def alert_summary(request):
+
     if not request.user.is_authenticated:
         return redirect('login_view')
     
@@ -293,11 +308,15 @@ def alert_summary(request):
     organization = request.user.organization
     one_week_ago = timezone.now() - timedelta(days=7)
     
+
+
     alerts = Alert.objects.filter(
         organization=organization,
         date__gte=one_week_ago
     ).select_related('device').order_by('-date')
     
+
+
     alert_counts = {
         'high': alerts.filter(severity='high').count(),
         'medium': alerts.filter(severity='medium').count(),
@@ -310,7 +329,7 @@ def alert_summary(request):
         'one_week_ago': one_week_ago,
     })
 
-# ✅ HU9 - EDIT MEASUREMENT
+
 def measurement_edit(request, pk):
     if not request.user.is_authenticated:
         return redirect('login_view')
@@ -371,3 +390,4 @@ def edit_organization(request):
         'organization': organization,
         'title': 'Editar Organización'
     })
+

@@ -3,27 +3,27 @@
 {% block content %}
 <div class="row">
     <div class="col-md-6">
-        <h2>Crear Nueva Medición</h2>
+        <h2>Create New Measurement</h2>
         
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
-                <label for="{{ form.device.id_for_label }}" class="form-label">Dispositivo</label>
+                <label for="{{ form.device.id_for_label }}" class="form-label">Device</label>
                 {{ form.device }}
             </div>
             
             <div class="mb-3">
-                <label for="{{ form.consumption.id_for_label }}" class="form-label">Consumo (kWh)</label>
+                <label for="{{ form.consumption.id_for_label }}" class="form-label">Consumption (kWh)</label>
                 {{ form.consumption }}
             </div>
             
             <div class="mb-3">
-                <label for="{{ form.organization.id_for_label }}" class="form-label">Organización</label>
+                <label for="{{ form.organization.id_for_label }}" class="form-label">Organization</label>
                 {{ form.organization }}
             </div>
             
-            <button type="submit" class="btn btn-primary">Crear Medición</button>
-            <a href="{% url 'measurement_list' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Create Measurement</button>
+            <a href="{% url 'measurement_list' %}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 </div>
