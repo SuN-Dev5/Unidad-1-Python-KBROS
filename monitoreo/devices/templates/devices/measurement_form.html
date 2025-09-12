@@ -1,1 +1,72 @@
+{% extends "devices/base.html" %}
 
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        {{ title|default:"Editar Medición" }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Dispositivo</label>
+                            {{ form.device }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Consumo (kWh)</label>
+                            {{ form.consumption }}
+                            <div class="form-text">Ingrese el valor de consumo en kilowatt-hora.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Organización</label>
+                            {{ form.organization }}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'measurement_list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Información adicional -->
+            {% if measurement %}
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Información de la Medición</h6>
+                    <p class="card-text mb-1">
+                        <small class="text-muted">
+                            <strong>ID:</strong> {{ measurement.id }}
+                        </small>
+                    </p>
+                    <p class="card-text mb-1">
+                        <small class="text-muted">
+                            <strong>Creado:</strong> {{ measurement.created_at|date:"d/m/Y H:i" }}
+                        </small>
+                    </p>
+                    <p class="card-text mb-0">
+                        <small class="text-muted">
+                            <strong>Actualizado:</strong> {{ measurement.updated_at|date:"d/m/Y H:i" }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
