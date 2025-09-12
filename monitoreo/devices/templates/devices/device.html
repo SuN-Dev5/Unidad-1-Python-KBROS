@@ -1,4 +1,4 @@
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>EcoEnergy</title>
@@ -33,7 +33,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="{% url 'device_list' %}">Dispositivos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'device_list' %}">Devices</a></li>
             </ul>
         </div>
     </div>
@@ -47,19 +47,19 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Listado de Dispositivos</span>
+                    <span>Device List</span>
                     <form method="get" class="d-flex align-items-center" style="gap: 10px;">
                         <select name="category" class="form-select form-select-sm" style="width: 200px;">
-                            <option value="">-- Filtrar por Categoría --</option>
+                            <option value="">-- Filter by Category --</option>
                             {% for cat in categories %}
                                 <option value="{{ cat.id }}" {% if selected_category|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>
                                     {{ cat.name }}
                                 </option>
                             {% endfor %}
                         </select>
-                        <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
                         {% if selected_category %}
-                            <a href="{% url 'device_list' %}" class="btn btn-secondary btn-sm">Limpiar</a>
+                            <a href="{% url 'device_list' %}" class="btn btn-secondary btn-sm">Clear</a>
                         {% endif %}
                     </form>
                 </div>
@@ -68,10 +68,10 @@
                     <table class="table table-striped mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Nombre</th>
-                                <th>Categoría</th>
-                                <th>Zona</th>
-                                <th>Detalle</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Zone</th>
+                                <th>Detail</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,13 +82,13 @@
                                 <td>{{ device.zone.name }}</td>
                                 <td>
                                    <a href="{% url 'device_detail' device.id %}" class="btn btn-sm btn-primary">
-                                   Ver detalle
+                                   View Details
                                    </a>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center">No hay dispositivos disponibles.</td>
+                                <td colspan="4" class="text-center">No devices available.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -108,4 +108,3 @@
 
 </body>
 </html>
-

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h1 class="mb-4">Listado Global de Mediciones</h1>
+        <h1 class="mb-4">Global Measurements List</h1>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="{% url 'create_measurement' %}" class="btn btn-success">
@@ -11,11 +11,11 @@
             </a>
         </div>
         
-        <!-- Tabla responsiva con Bootstrap -->
+        <!-- Responsive table with Bootstrap -->
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead class="table-dark">
-                    <tr>
+
                         <th scope="col">Fecha/Hora</th>
                         <th scope="col">Valor (kWh)</th>
                         <th scope="col">Dispositivo</th>
@@ -25,7 +25,7 @@
                 <tbody>
                     {% for measurement in measurements %}
                     <tr>
-                        <td>{{ measurement.date|date:"d/m/Y H:i" }}</td>
+                        <td>{{ measurement.date|date:"m/d/Y H:i" }}</td>
                         <td>
                             <span class="badge bg-primary">{{ measurement.consumption }} kWh</span>
                         </td>
@@ -57,7 +57,7 @@
                     <tr>
                         <td colspan="4" class="text-center text-muted fst-italic py-4">
                             <i class="fas fa-info-circle me-2"></i>
-                            No hay mediciones registradas.
+                            No measurements recorded.
                         </td>
                     </tr>
                     {% endfor %}
@@ -65,18 +65,18 @@
             </table>
         </div>
 
-        <!-- Paginación con Bootstrap -->
+        <!-- Bootstrap pagination -->
         {% if measurements.has_other_pages %}
-        <nav aria-label="Paginación de mediciones" class="mt-4">
+        <nav aria-label="Measurements pagination" class="mt-4">
             <ul class="pagination justify-content-center">
                 {% if measurements.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="Primera">
+                        <a class="page-link" href="?page=1" aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.previous_page_number }}" aria-label="Anterior">
+                        <a class="page-link" href="?page={{ measurements.previous_page_number }}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -89,21 +89,21 @@
                     </li>
                 {% endif %}
 
-                <!-- Información de página actual -->
+                <!-- Current page information -->
                 <li class="page-item active" aria-current="page">
                     <span class="page-link">
-                        {{ measurements.number }} de {{ measurements.paginator.num_pages }}
+                        {{ measurements.number }} of {{ measurements.paginator.num_pages }}
                     </span>
                 </li>
 
                 {% if measurements.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.next_page_number }}" aria-label="Siguiente">
+                        <a class="page-link" href="?page={{ measurements.next_page_number }}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.paginator.num_pages }}" aria-label="Última">
+                        <a class="page-link" href="?page={{ measurements.paginator.num_pages }}" aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>
                     </li>
@@ -118,20 +118,20 @@
             </ul>
         </nav>
 
-        <!-- Información adicional -->
+        <!-- Additional information -->
         <div class="row mt-4">
             <div class="col-md-6">
                 <div class="card bg-light">
                     <div class="card-body">
-                        <h6 class="card-title">Información</h6>
+                        <h6 class="card-title">Information</h6>
                         <p class="card-text mb-1">
                             <small class="text-muted">
-                                Total de mediciones: {{ measurements.paginator.count }}
+                                Total measurements: {{ measurements.paginator.count }}
                             </small>
                         </p>
                         <p class="card-text mb-0">
                             <small class="text-muted">
-                                Mostrando máximo 50 registros por página
+                                Showing maximum 50 records per page
                             </small>
                         </p>
                     </div>
