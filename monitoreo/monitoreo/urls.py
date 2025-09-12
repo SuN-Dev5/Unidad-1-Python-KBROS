@@ -15,43 +15,45 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path
 from devices.views import (
-    start, Device, create_device, dashboard, device_list, measurement_list, 
-    login_view, register_view, device_detail, update_device, delete_device, 
+    start, device_detail, create_device, dashboard, device_list, measurement_list, 
+    login_view, register_view, update_device, delete_device, 
     edit_profile, password_reset, create_measurement,
     # ✅ NUEVAS VIEWS PARA LAS HU
     alert_summary, measurement_edit, measurement_delete, add_alert, edit_organization
 )
 
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib import admin
-from django.urls import path
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', start, name='start'),
-    path('devices/<int:device_id>/', Device, name='device'),
-    path('devices/create/', create_device, name='create_device'),
-    path('dashboard/', dashboard, name='dashboard'),
-    path('devices/', device_list, name='device_list'),
-    path('measurements/', measurement_list, name='measurement_list'),
-    path('measurements/create/', create_measurement, name='create_measurement'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
+    path('dashboard/', dashboard, name='dashboard'),
     path('password_reset/', password_reset, name='password_reset'),
-    path('<int:pk>/', device_detail, name='device_detail'),
-    path('<int:pk>/edit/', update_device, name='update_device'),
-    path('<int:pk>/delete/', delete_device, name='delete_device'),
-    path('profile/edit/', edit_profile, name='edit_profile'),
     
-    # ✅ NUEVAS URLs PARA LAS HU DE GABO
-    # HU5 - Resumen de alertas de la semana
-    path('alerts/summary/', alert_summary, name='alert_summary'),
+    # Devices URLs
+    path('devices/', device_list, name='device_list'),
+    path('devices/create/', create_device, name='create_device'),
+    path('devices/<int:pk>/', device_detail, name='device_detail'),
+    path('devices/<int:pk>/edit/', update_device, name='update_device'),
+    path('devices/<int:pk>/delete/', delete_device, name='delete_device'),
     
-    # HU9 - CRUD Measurement (Edit y Delete)
+    # Measurements URLs
+    path('measurements/', measurement_list, name='measurement_list'),
+    path('measurements/create/', create_measurement, name='create_measurement'),
     path('measurements/<int:pk>/edit/', measurement_edit, name='measurement_edit'),
     path('measurements/<int:pk>/delete/', measurement_delete, name='measurement_delete'),
+    
+    # Profile URLs
+    path('profile/edit/', edit_profile, name='edit_profile'),
+    
+    # ✅ NUEVAS URLs PARA LAS HU
+    # HU5 - Resumen de alertas de la semana
+    path('alerts/summary/', alert_summary, name='alert_summary'),
     
     # HU13 - Add Alert
     path('alerts/add/', add_alert, name='add_alert'),

@@ -61,10 +61,22 @@ class Measurement(BaseModel):
         return f"{self.device} - {self.consumption} kWh"
 
 class Alert(BaseModel):
+    SEVERITY_CHOICES = [
+        ('low', 'Baja'),
+        ('medium', 'Media'),
+        ('high', 'Alta'),
+    ]
+
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     message = models.CharField(max_length=200)
+    severity = models.CharField(
+        max_length=10,
+        choices=SEVERITY_CHOICES,
+        default='medium'
+    )
     date = models.DateTimeField(auto_now_add=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+   
 
     def __str__(self):
         return f"Alert {self.device} - {self.message}"
