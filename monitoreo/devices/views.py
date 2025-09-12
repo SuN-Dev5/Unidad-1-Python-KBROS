@@ -376,6 +376,7 @@ def edit_organization(request):
     organization = request.user.organization
     
     if request.method == 'POST':
+
         new_name = request.POST.get('name')
         new_status = request.POST.get('status')
         
@@ -383,6 +384,7 @@ def edit_organization(request):
         organization.status = new_status
         organization.save()
         
+
         messages.success(request, 'Organización actualizada correctamente')
         return redirect('dashboard')
     
