@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Resumen de Alertas de la Semana - {{ user.organization.name }}</h2>
+        <h2>Resumen de Alertas de la Semana - {{ organization.name }}</h2>
         <a href="{% url 'add_alert' %}" class="btn btn-warning">
             <i class="fas fa-plus me-1"></i> Agregar Alerta
         </a>
@@ -14,7 +14,7 @@
         <div class="col-md-4">
             <div class="card bg-danger text-white text-center">
                 <div class="card-body">
-                    <h3>{{ alert_counts.high }}</h3>
+                    <h3>{{ alert_counts.high|default:"0" }}</h3>
                     <p>Alertas Graves</p>
                 </div>
             </div>
@@ -22,7 +22,7 @@
         <div class="col-md-4">
             <div class="card bg-warning text-dark text-center">
                 <div class="card-body">
-                    <h3>{{ alert_counts.medium }}</h3>
+                    <h3>{{ alert_counts.medium|default:"0" }}</h3>
                     <p>Alertas Altas</p>
                 </div>
             </div>
@@ -30,14 +30,14 @@
         <div class="col-md-4">
             <div class="card bg-info text-white text-center">
                 <div class="card-body">
-                    <h3>{{ alert_counts.low }}</h3>
+                    <h3>{{ alert_counts.low|default:"0" }}</h3>
                     <p>Alertas Medias</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filtros y información -->
+    <!-- Filtros y resumen -->
     <div class="card mb-4 bg-light">
         <div class="card-body">
             <div class="row">
@@ -74,7 +74,7 @@
                     <thead class="table-primary">
                         <tr>
                             <th>Dispositivo</th>
-                            <th>Mensaje de Alerta</th>
+                            <th>Mensaje</th>
                             <th>Severidad</th>
                             <th>Fecha y Hora</th>
                             <th>Acciones</th>
@@ -93,11 +93,7 @@
                                     {{ alert.device.category.name }} - {{ alert.device.zone.name }}
                                 </small>
                             </td>
-                            <td>
-                                <div class="alert-message">
-                                    {{ alert.message }}
-                                </div>
-                            </td>
+                            <td class="alert-message">{{ alert.message }}</td>
                             <td>
                                 <span class="badge bg-{% if alert.severity == 'high' %}danger{% elif alert.severity == 'medium' %}warning{% else %}info{% endif %} p-2">
                                     <i class="fas fa-{% if alert.severity == 'high' %}exclamation-triangle{% elif alert.severity == 'medium' %}exclamation-circle{% else %}info-circle{% endif %} me-1"></i>
@@ -121,16 +117,16 @@
                 </table>
             </div>
 
-            <!-- Estadísticas adicionales -->
+            <!-- Acciones rápidas -->
             <div class="row mt-4">
                 <div class="col-md-6">
                     <div class="card bg-light">
                         <div class="card-body">
                             <h6 class="card-title">Resumen por severidad</h6>
                             <div class="d-flex justify-content-between">
-                                <span class="text-danger">Grave: {{ alert_counts.high }}</span>
-                                <span class="text-warning">Alta: {{ alert_counts.medium }}</span>
-                                <span class="text-info">Media: {{ alert_counts.low }}</span>
+                                <span class="text-danger">Grave: {{ alert_counts.high|default:"0" }}</span>
+                                <span class="text-warning">Alta: {{ alert_counts.medium|default:"0" }}</span>
+                                <span class="text-info">Media: {{ alert_counts.low|default:"0" }}</span>
                             </div>
                         </div>
                     </div>

@@ -123,5 +123,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# ============================
+# Autenticación personalizada
+# ============================
+
+# A dónde se redirige si el usuario no está logueado
+LOGIN_URL = '/login/'
+
+# Redirección después de iniciar sesión
+LOGIN_REDIRECT_URL = '/dashboard/'
+
+# Redirección después de cerrar sesión
+LOGOUT_REDIRECT_URL = '/login/'
