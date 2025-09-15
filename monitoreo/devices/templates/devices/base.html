@@ -41,9 +41,29 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'device_list' %}">Devices</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'measurement_list' %}">Measurements</a></li>
             </ul>
+
+            <!-- 🔑 Navbar dinámico -->
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="btn btn-outline-light me-2" href="{% url 'login' %}">Login</a></li>
-                <li class="nav-item"><a class="btn btn-light" href="{% url 'register' %}">Register</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="navbar-text text-light me-3">
+                            Bienvenido, {{ user.first_name|default:user.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light me-2" href="{% url 'edit_profile' %}">Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-light" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -53,7 +73,6 @@
 <div class="content-wrapper">
     <div class="container mt-4">
         {% block content %}
-        <!-- Aquí se inyecta el contenido de cada página -->
         {% endblock %}
     </div>
 </div>
@@ -63,7 +82,7 @@
     <p class="mb-0">© 2025 EcoEnergy</p>
 </footer>
 
-<!-- Bootstrap JS (para toggler del navbar) -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
