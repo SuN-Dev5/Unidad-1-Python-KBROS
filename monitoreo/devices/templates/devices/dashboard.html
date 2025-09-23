@@ -1,7 +1,7 @@
 {% extends 'devices/base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Dashboard - {{ user.organization.name }}</h2>
+    <h2>Dashboard - {{ organization.name }}</h2>
     
     <!-- Tarjetas de resumen con enlaces -->
     <div class="row mb-4">
@@ -52,13 +52,13 @@
                     <!-- Badges de severidad -->
                     <div class="row mb-3">
                         <div class="col-md-4 text-center">
-                            <span class="badge bg-danger p-2">Grave: {{ alert_counts.high }}</span>
+                            <span class="badge bg-danger p-2">Grave: {{ alert_counts.high|default:"0" }}</span>
                         </div>
                         <div class="col-md-4 text-center">
-                            <span class="badge bg-warning p-2">Alta: {{ alert_counts.medium }}</span>
+                            <span class="badge bg-warning p-2">Alta: {{ alert_counts.medium|default:"0" }}</span>
                         </div>
                         <div class="col-md-4 text-center">
-                            <span class="badge bg-info p-2">Media: {{ alert_counts.low }}</span>
+                            <span class="badge bg-info p-2">Media: {{ alert_counts.low|default:"0" }}</span>
                         </div>
                     </div>
                     
@@ -124,7 +124,7 @@
                                             {{ measurement.device.name }}
                                         </a>
                                     </td>
-                                    <td><strong>{{ measurement.consumption }} kWh</strong></td>
+                                    <td><strong>{{ measurement.consumption|floatformat:2 }} kWh</strong></td>
                                     <td>{{ measurement.date|date:"d/m/Y H:i" }}</td>
                                 </tr>
                                 {% endfor %}
@@ -155,12 +155,12 @@
                     {% if categories %}
                     <div class="list-group">
                         {% for category in categories %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'device_list' %}?category={{ category.id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             {{ category.name }}
                             <span class="badge bg-primary rounded-pill">
                                 {{ category.device_set.count }} dispositivos
                             </span>
-                        </div>
+                        </a>
                         {% endfor %}
                     </div>
                     {% else %}
@@ -180,12 +180,12 @@
                     {% if zones %}
                     <div class="list-group">
                         {% for zone in zones %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'device_list' %}?zone={{ zone.id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             {{ zone.name }}
                             <span class="badge bg-success rounded-pill">
                                 {{ zone.device_set.count }} dispositivos
                             </span>
-                        </div>
+                        </a>
                         {% endfor %}
                     </div>
                     {% else %}

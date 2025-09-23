@@ -1,145 +1,128 @@
 {% extends "devices/base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">Global Measurements List</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-chart-line me-2"></i>
+        Mediciones Globales - {{ user.organization.name }}
+    </h2>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{% url 'create_measurement' %}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Nueva Medición
-            </a>
-        </div>
-        
-        <!-- Responsive table with Bootstrap -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-
-                        <th scope="col">Fecha/Hora</th>
-                        <th scope="col">Valor (kWh)</th>
-                        <th scope="col">Dispositivo</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for measurement in measurements %}
-                    <tr>
-                        <td>{{ measurement.date|date:"m/d/Y H:i" }}</td>
-                        <td>
-                            <span class="badge bg-primary">{{ measurement.consumption }} kWh</span>
-                        </td>
-                        <td>
-                            <a href="{% url 'device_detail' measurement.device.pk %}" 
-                               class="text-decoration-none fw-bold">
-                                {{ measurement.device.name }}
+    <!-- Botón nueva medición -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'create_measurement' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Nueva Medición
+        </a>
+    </div>
+    
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha/Hora</th>
+                    <th>Valor (kWh)</th>
+                    <th>Dispositivo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for measurement in measurements %}
+                <tr>
+                    <td>{{ measurement.date|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <span class="badge bg-primary">
+                            {{ measurement.consumption|floatformat:2 }} kWh
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'device_detail' measurement.device.pk %}" 
+                           class="text-decoration-none fw-bold">
+                            {{ measurement.device.name }}
+                        </a>
+                        <small class="text-muted d-block">
+                            {{ measurement.device.category.name }} - {{ measurement.device.zone.name }}
+                        </small>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="#" class="btn btn-outline-primary" title="Editar (pendiente)">
+                                <i class="fas fa-edit"></i>
                             </a>
-                            <small class="text-muted d-block">
-                                {{ measurement.device.category.name }} - {{ measurement.device.zone.name }}
-                            </small>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="{% url 'measurement_edit' measurement.pk %}" 
-                                   class="btn btn-outline-primary" 
-                                   title="Editar medición">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{% url 'measurement_delete' measurement.pk %}" 
-                                   class="btn btn-outline-danger" 
-                                   title="Eliminar medición">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted fst-italic py-4">
-                            <i class="fas fa-info-circle me-2"></i>
-                            No measurements recorded.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            <a href="#" class="btn btn-outline-danger" title="Eliminar (pendiente)">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted fst-italic py-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No hay mediciones registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        <!-- Bootstrap pagination -->
-        {% if measurements.has_other_pages %}
-        <nav aria-label="Measurements pagination" class="mt-4">
-            <ul class="pagination justify-content-center">
-                {% if measurements.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="First">
-                            <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.previous_page_number }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo;&laquo;</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo;</span>
-                    </li>
-                {% endif %}
-
-                <!-- Current page information -->
-                <li class="page-item active" aria-current="page">
-                    <span class="page-link">
-                        {{ measurements.number }} of {{ measurements.paginator.num_pages }}
-                    </span>
+    <!-- Paginación -->
+    {% if measurements.has_other_pages %}
+    <nav aria-label="Measurements pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if measurements.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;&laquo;</a>
                 </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ measurements.previous_page_number }}">&laquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;&laquo;</span></li>
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            {% endif %}
 
-                {% if measurements.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.next_page_number }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ measurements.paginator.num_pages }}" aria-label="Last">
-                            <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&raquo;</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">&raquo;&raquo;</span>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ measurements.number }} de {{ measurements.paginator.num_pages }}
+                </span>
+            </li>
 
-        <!-- Additional information -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h6 class="card-title">Information</h6>
-                        <p class="card-text mb-1">
-                            <small class="text-muted">
-                                Total measurements: {{ measurements.paginator.count }}
-                            </small>
-                        </p>
-                        <p class="card-text mb-0">
-                            <small class="text-muted">
-                                Showing maximum 50 records per page
-                            </small>
-                        </p>
-                    </div>
+            {% if measurements.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ measurements.next_page_number }}">&raquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ measurements.paginator.num_pages }}">&raquo;&raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                <li class="page-item disabled"><span class="page-link">&raquo;&raquo;</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Info adicional -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Información</h6>
+                    <p class="card-text mb-1">
+                        <small class="text-muted">
+                            Total mediciones: {{ measurements.paginator.count }}
+                        </small>
+                    </p>
+                    <p class="card-text mb-0">
+                        <small class="text-muted">
+                            Mostrando máximo 50 registros por página
+                        </small>
+                    </p>
                 </div>
             </div>
         </div>
-        {% endif %}
-
     </div>
+
 </div>
 {% endblock %}

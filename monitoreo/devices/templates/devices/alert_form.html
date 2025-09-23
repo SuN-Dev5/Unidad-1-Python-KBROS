@@ -17,11 +17,11 @@
                     <form method="post">
                         {% csrf_token %}
                         
-                        <!-- Campo Dispositivo (solo si no viene de un dispositivo específico) -->
+                        <!-- Campo Dispositivo -->
                         {% if not device %}
                         <div class="mb-3">
                             <label for="device" class="form-label fw-bold">
-                                <i class="fas fa-microchip me-1"></i>Seleccionar Dispositivo
+                                <i class="fas fa-microchip me-1"></i> Seleccionar Dispositivo
                             </label>
                             <select class="form-select" id="device" name="device" required>
                                 <option value="">-- Seleccione un dispositivo --</option>
@@ -42,7 +42,7 @@
                         <!-- Campo Mensaje -->
                         <div class="mb-3">
                             <label for="message" class="form-label fw-bold">
-                                <i class="fas fa-comment me-1"></i>Mensaje de la Alerta
+                                <i class="fas fa-comment me-1"></i> Mensaje de la Alerta
                             </label>
                             <textarea class="form-control" 
                                       id="message" 
@@ -57,19 +57,13 @@
                         <!-- Campo Severidad -->
                         <div class="mb-4">
                             <label for="severity" class="form-label fw-bold">
-                                <i class="fas fa-exclamation-triangle me-1"></i>Nivel de Severidad
+                                <i class="fas fa-exclamation-triangle me-1"></i> Nivel de Severidad
                             </label>
                             <select class="form-select" id="severity" name="severity" required>
                                 <option value="">-- Seleccione la severidad --</option>
-                                <option value="high">
-                                    🔴 Grave - Problema crítico que requiere atención inmediata
-                                </option>
-                                <option value="medium">
-                                    🟡 Alta - Problema importante que necesita revisión
-                                </option>
-                                <option value="low">
-                                    🔵 Media - Situación que merece monitoreo
-                                </option>
+                                <option value="high">🔴 Grave - Problema crítico que requiere atención inmediata</option>
+                                <option value="medium">🟡 Alta - Problema importante que necesita revisión</option>
+                                <option value="low">🔵 Media - Situación que merece monitoreo</option>
                             </select>
                             <div class="form-text">La severidad determina la prioridad de la alerta.</div>
                         </div>
@@ -97,7 +91,7 @@
             <div class="card mt-3 bg-light">
                 <div class="card-body">
                     <h6 class="card-title">
-                        <i class="fas fa-lightbulb me-1"></i>Tipos de Alertas Recomendadas
+                        <i class="fas fa-lightbulb me-1"></i> Tipos de Alertas Recomendadas
                     </h6>
                     <div class="row">
                         <div class="col-md-4">
@@ -112,7 +106,7 @@
                             <div class="card bg-warning text-dark mb-2">
                                 <div class="card-body p-2">
                                     <small><strong>🟡 Alta</strong></small>
-                                    <small>• Alto consumo<br>• fluctuaciones<br>• Mantenimiento needed</small>
+                                    <small>• Alto consumo<br>• Fluctuaciones<br>• Mantenimiento pendiente</small>
                                 </div>
                             </div>
                         </div>
