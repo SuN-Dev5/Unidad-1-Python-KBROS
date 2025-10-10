@@ -21,4 +21,5 @@ H11 Edit Profile
 H12 Edit Organization
 H13 Add Alert
  se lo quedo el gabo :P
- 
+ mentira es mi ma encima ni viniste klooo
+ /c/wamp64/bin/mariadb/mariadb11.5.2/bin/mariadb.exe -u root -p -h 127.0.0.1 -P 3307
