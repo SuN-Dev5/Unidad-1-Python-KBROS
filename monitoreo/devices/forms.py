@@ -9,11 +9,16 @@ from .models import Device, Measurement, Alert
 class DeviceForm(forms.ModelForm):
     class Meta:
         model = Device
-        fields = ['name', 'category', 'zone', 'maximum_consumption', 'organization', 'status']
+        # ================================================
+        # == ✏️ CAMBIO REQUERIDO (Guía EcoEnergy)
+        # == Añadimos 'serial' al formulario.
+        # ================================================
+        fields = ['name', 'category', 'zone', 'serial', 'maximum_consumption', 'organization', 'status']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'zone': forms.Select(attrs={'class': 'form-control'}),
+            'serial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: SN-12345ABC'}), # 👈 Añadido
             'maximum_consumption': forms.NumberInput(attrs={'class': 'form-control'}),
             'organization': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),

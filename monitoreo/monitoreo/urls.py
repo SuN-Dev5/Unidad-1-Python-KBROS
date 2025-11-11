@@ -16,6 +16,8 @@ urlpatterns = [
     
     # 2. Conecta todas las URLs de la app (dashboard, CRUDs, etc.)
     path('', include('devices.urls')),
+
+    path('', include('productos.urls')),
 ]
 
 # Dejamos esto al final para que funcionen los avatares

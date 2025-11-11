@@ -1,0 +1,80 @@
+{% extends "devices/base.html" %}
+
+{% block title %}Catálogo de Productos - EcoEnergy{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="fas fa-box-open me-2"></i>Catálogo de Productos</h2>
+    
+    {% if perms.productos.add_producto %}
+    <a href="{% url 'producto_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Crear Producto
+    </a>
+    {% endif %}
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %} 
+                    <tr>
+                        <td>
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-thumbnail" width="60" height="60" style="object-fit: cover;">
+                            {% else %}
+                                <span class="text-muted small">Sin imagen</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.descripcion|truncatewords:10 }}</td>
+                        <td>${{ producto.precio|floatformat:2 }}</td>
+                        <td>{{ producto.stock }}</td>
+                        <td>
+                            {% if perms.productos.change_producto %}
+                            <a href="{% url 'producto_update' producto.pk %}" class="btn btn-sm btn-warning" title="Editar">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            {% endif %}
+                            
+                            {% if perms.productos.delete_producto %}
+                            <button type="button" 
+                                    class="btn btn-sm btn-danger btn-delete" 
+                                    data-url="{% url 'producto_delete' producto.pk %}"
+                                    title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No hay productos registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

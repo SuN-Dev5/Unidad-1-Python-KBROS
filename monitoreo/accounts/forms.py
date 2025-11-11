@@ -85,6 +85,26 @@ class ProfileUpdateForm(forms.ModelForm):
             'avatar': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
+    # ================================================
+    # == ✏️ CAMBIO REQUERIDO (Guía EcoEnergy)
+    # == Añadimos validación de tamaño y tipo de imagen .
+    # ================================================
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        
+        # 'avatar' es 'False' si el usuario limpia el campo
+        # 'avatar' es 'None' si el campo no cambió
+        if avatar:
+            # 1. Validar tamaño (Máx 2MB) 
+            if avatar.size > 2 * 1024 * 1024: # 2MB
+                raise forms.ValidationError("La imagen es demasiado grande (máximo 2MB).")
+            
+            # 2. Validar tipo (JPG/PNG) 
+            if not avatar.name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                raise forms.ValidationError("Solo se permiten imágenes en formato JPG o PNG.")
+        
+        return avatar
+
 # ---------------------------
 # 🔑 Formulario de Cambio de Contraseña
 # ---------------------------

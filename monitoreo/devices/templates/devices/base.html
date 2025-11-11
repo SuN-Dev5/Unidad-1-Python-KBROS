@@ -37,9 +37,22 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-home me-1"></i>Dashboard</a></li>
+                
+                {% if perms.devices.view_device %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'device_list' %}"><i class="fas fa-microchip me-1"></i>Devices</a></li>
+                {% endif %}
+                
+                {% if perms.devices.view_measurement %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'measurement_list' %}"><i class="fas fa-chart-line me-1"></i>Measurements</a></li>
+                {% endif %}
+
+                {% if perms.devices.view_alert %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'alert_summary' %}"><i class="fas fa-bell me-1"></i>Alerts</a></li>
+                {% endif %}
+
+                {% if perms.productos.view_producto %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'producto_list' %}"><i class="fas fa-box-open me-1"></i>Productos</a></li>
+                {% endif %}
             </ul>
 
             <ul class="navbar-nav">
