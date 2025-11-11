@@ -5,7 +5,6 @@
     <title>{% block title %}EcoEnergy{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -27,7 +26,6 @@
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'dashboard' %}">EcoEnergy</a>
@@ -44,7 +42,6 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'alert_summary' %}"><i class="fas fa-bell me-1"></i>Alerts</a></li>
             </ul>
 
-            <!-- 🔑 Navbar dinámico -->
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -53,7 +50,7 @@
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-light me-2" href="{% url 'edit_profile' %}">
+                        <a class="btn btn-outline-light me-2" href="{% url 'profile' %}">
                             <i class="fas fa-user me-1"></i>Perfil
                         </a>
                     </li>
@@ -79,20 +76,101 @@
     </div>
 </nav>
 
-<!-- Contenido dinámico -->
 <div class="content-wrapper">
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer bg-dark text-light text-center p-3">
     <p class="mb-0">© 2025 EcoEnergy</p>
+    
+    <form style="display: none;">{% csrf_token %}</form>
 </footer>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        // Función para obtener el CSRF token
+        function getCsrfToken() {
+            // Busca el token en el formulario oculto que añadimos en el footer
+            let token = document.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (token) {
+                return token.value;
+            }
+            return null; 
+        }
+
+        // Escuchar Clicks en todos los botones '.btn-delete'
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Detener la acción normal
+                
+                const deleteUrl = this.dataset.url; // Obtener la URL desde 'data-url'
+                const csrfToken = getCsrfToken(); // Obtener el token
+
+                if (!csrfToken) {
+                     Swal.fire('Error', 'No se pudo verificar la seguridad (CSRF Token). Recarga la página.', 'error');
+                     return;
+                }
+
+                // 2. Mostrar el Modal de Confirmación
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, ¡eliminar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    
+                    // 3. Si el usuario confirma...
+                    if (result.isConfirmed) {
+                        
+                        // 4. Enviar la petición de borrado (Fetch POST)
+                        fetch(deleteUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken, // Enviar el token de seguridad
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                // 5. Mostrar éxito y recargar la página
+                                Swal.fire(
+                                    '¡Eliminado!',
+                                    data.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                // 6. Mostrar error
+                                Swal.fire(
+                                    'Error',
+                                    data.message,
+                                    'error'
+                                );
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Error', 'No se pudo contactar al servidor.', 'error');
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

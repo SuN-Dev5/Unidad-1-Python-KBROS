@@ -1,7 +1,7 @@
+# devices/forms.py
 from django import forms
 from .models import Device, Measurement, Alert
-from django.contrib.auth.models import User
-
+# Se eliminó la importación de User, ya no se usa aquí.
 
 # ---------------------------
 # 📌 Device Form
@@ -19,20 +19,6 @@ class DeviceForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
-
-# ---------------------------
-# 👤 User Update Form
-# ---------------------------
-class UserUpdateForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'email']
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'})
-        }
-
-
 # ---------------------------
 # 📏 Measurement Form
 # ---------------------------
@@ -47,12 +33,12 @@ class MeasurementForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        # (Esta lógica es avanzada, ¡muy bien!)
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user and hasattr(user, 'organization'):
             self.fields['device'].queryset = Device.objects.filter(organization=user.organization)
             self.fields['organization'].initial = user.organization
-
 
 # ---------------------------
 # 🚨 Alert Form
