@@ -37,7 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Mis aplicaciones
     'devices',
+    'organizations',
+    'accounts', 
+    'productos',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +60,7 @@ ROOT_URLCONF = 'monitoreo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,10 +78,20 @@ WSGI_APPLICATION = 'monitoreo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# ==================================================
+# == ✏️ SECCIÓN ACTUALIZADA A MySQL 
+# ==================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'monitoreo_db',     # El nombre de la BD que creaste en phpMyAdmin
+        'USER': 'root',             # Tu usuario de MySQL 
+        'PASSWORD': '',             # Tu contraseña de MySQL 
+        'HOST': '127.0.0.1',        # 'localhost'
+        'PORT': '3306',             # Puerto por defecto de MySQL
+        'OPTIONS': {
+            'sql_mode': 'STRICT_TRANS_TABLES',
+        },
     }
 }
 
@@ -101,14 +116,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# https://docs.djangoproject.com/en/5.2/topics/i1n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# (Recomendación: Cambiar a español de Chile)
+LANGUAGE_CODE = 'es-cl'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -138,3 +152,5 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 
 # Redirección después de cerrar sesión
 LOGOUT_REDIRECT_URL = '/login/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'

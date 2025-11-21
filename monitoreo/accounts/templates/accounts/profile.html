@@ -1,0 +1,116 @@
+{% extends "devices/base.html" %}
+
+{% block title %}Mi Perfil - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h2 class="mb-4">Gestionar Perfil</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos Personales</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="text-center mb-3">
+                            <img src="{{ user.profile.avatar.url }}" 
+                                 alt="Avatar de {{ user.username }}" 
+                                 class="img-thumbnail rounded-circle" 
+                                 width="150" 
+                                 height="150"
+                                 style="object-fit: cover;">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.first_name.id_for_label }}" class="form-label">{{ user_form.first_name.label }}</label>
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.last_name.id_for_label }}" class="form-label">{{ user_form.last_name.label }}</label>
+                                {{ user_form.last_name }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ user_form.email.id_for_label }}" class="form-label">{{ user_form.email.label }}</label>
+                            {{ user_form.email }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ profile_form.telefono.id_for_label }}" class="form-label">{{ profile_form.telefono.label }}</_label>
+                            {{ profile_form.telefono }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">{{ profile_form.avatar.label }} (Subir nueva)</label>
+                            {{ profile_form.avatar }}
+                            {% if profile_form.avatar.errors %}
+                                <div class="text-danger small">{{ profile_form.avatar.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" name="update_profile" class="btn btn-primary">Actualizar Perfil</button>
+                    </form>
+                    </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Seguridad</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <h6 class="mb-3">Cambiar Contraseña</h6>
+
+                        <div class="mb-3">
+                            <label for="{{ password_form.old_password.id_for_label }}" class="form-label">{{ password_form.old_password.label }}</label>
+                            {{ password_form.old_password }}
+                            {% if password_form.old_password.errors %}
+                                <div class="text-danger small">{{ password_form.old_password.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ password_form.new_password1.id_for_label }}" class="form-label">{{ password_form.new_password1.label }}</label>
+                            {{ password_form.new_password1 }}
+                            {% if password_form.new_password1.errors %}
+                                <div class="text-danger small">{{ password_form.new_password1.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ password_form.new_password2.id_for_label }}" class="form-label">{{ password_form.new_password2.label }}</label>
+                            {{ password_form.new_password2 }}
+                            {% if password_form.new_password2.errors %}
+                                <div class="text-danger small">{{ password_form.new_password2.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if password_form.non_field_errors %}
+                            <div class="alert alert-danger p-2 small">
+                                {{ password_form.non_field_errors|join:", " }}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" name="change_password" class="btn btn-danger w-100">Cambiar Contraseña</button>
+                    </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

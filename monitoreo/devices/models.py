@@ -10,12 +10,12 @@ class BaseModel(models.Model):
     ]
 
     status = models.CharField(max_length=10, choices=STATUS, default="ACTIVE")
-    created_at = models.DateTimeField(auto_now_add=True)   # se asigna al crear
-    updated_at = models.DateTimeField(auto_now=True)       # se actualiza cada vez que se guarda
-    deleted_at = models.DateTimeField(null=True, blank=True)  # opcional para borrado lógico
+    created_at = models.DateTimeField(auto_now_add=True)  # se asigna al crear
+    updated_at = models.DateTimeField(auto_now=True)      # se actualiza cada vez que se guarda
+    deleted_at = models.DateTimeField(null=True, blank=True) # opcional para borrado lógico
 
     class Meta:
-        abstract = True   # no crea tabla, solo se hereda
+        abstract = True  # no crea tabla, solo se hereda
 
 # -----------------------------
 # Tablas principales
@@ -33,6 +33,10 @@ class Category(BaseModel):
 
     def __str__(self):
         return self.name
+    
+    # 💡 Corrección (Opcional): Para que en el admin diga "Categories"
+    class Meta:
+        verbose_name_plural = "Categories"
 
 class Zone(BaseModel):
     name = models.CharField(max_length=100)
@@ -47,6 +51,12 @@ class Device(BaseModel):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
     maximum_consumption = models.IntegerField()  # watts
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+
+    # ================================================
+    # == ✏️ CAMBIO REQUERIDO (Guía EcoEnergy) 
+    # == Añadimos el serial único.
+    # ================================================
+    serial = models.CharField(max_length=100, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -76,8 +86,7 @@ class Alert(BaseModel):
     )
     date = models.DateTimeField(auto_now_add=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-   
+    
 
     def __str__(self):
         return f"Alert {self.device} - {self.message}"
-    
